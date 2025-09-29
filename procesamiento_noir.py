@@ -71,7 +71,7 @@ def apply_advanced_preprocessing_nir(bgr: np.ndarray) -> np.ndarray:
     try:
         h, w = bgr.shape[:2]
         
-        # 1. BALANCE DE BLANCOS GRAY WORLD (simplificado)
+        # 1. BALANCE DE BLANCOS GRAY WORLD 
         # Convertir a float32 para cálculos
         bgr_float = bgr.astype(np.float32)
         b, g, r = bgr_float[:,:,0], bgr_float[:,:,1], bgr_float[:,:,2]

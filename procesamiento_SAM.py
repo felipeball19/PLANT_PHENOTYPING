@@ -13,14 +13,14 @@ CHECKPOINT_PATH = "sam_vit_h_4b8939.pth"
 CSV_PATH = "output/metricas_tallos.csv"
 
 # Configuración para procesamiento imagen por imagen
-CURRENT_IMAGE = "foto_2025-09-17_13-00-43.jpg" 
+CURRENT_IMAGE = "foto_2025-09-27_16-00-02.jpg" 
 
 # Global variables for interactive mode
 input_points = []
 input_labels = []
 manual_mode = True
 
-# --- Helper Functions ---
+
 def preprocess_image(image_bgr):
     """
     Preprocesar imagen con suavizado selectivo, corrección de dominancia de color y CLAHE
@@ -198,7 +198,7 @@ def mouse_callback(event, x, y, flags, param):
             input_labels.append(0)
             show_points_on_image(param)
 
-# --- Metric Functions using PlantCV ---
+
 def get_plantcv_metrics(image_rgb, mask, image_bgr):
     """
     Función para calcular altura total y altura de cada tallo individual
@@ -375,9 +375,7 @@ def get_opencv_metrics_fallback(mask):
     }
 
 def save_metrics_to_csv(filename, image_file, metrics_dict):
-    """
-    Guardar métricas con una fila por cada tallo individual, evitando duplicados
-    """
+    
     headers = [
         'Nombre_Archivo', 
         'Tallo_ID',

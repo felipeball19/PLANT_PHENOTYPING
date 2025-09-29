@@ -29,6 +29,19 @@ CSV_PATH = os.path.join(OUTPUT_DIR, "metricas_morfologicas.csv")
 MIN_LEAF_AREA = 206         # Área mínima para considerar una hoja (reducido para detectar hojas pequeñas)
 KERNEL_SIZE = 4              # Tamaño del kernel para morfología (ajustado)
 
+# Imágenes problemáticas que requieren parámetros especiales
+PROBLEMATIC_IMAGES = [
+    "webcam_2025-09-15_13-00-06",
+    "webcam_2025-09-15_16-00-18",
+    "webcam_2025-09-19_16-00-18",
+    "webcam_2025-09-26_13-00-18",
+    "webcam_2025-08-28_13-00-15",
+    "webcam_2025-09-07_09-00-14",
+    "webcam_2025-09-14_13-00-02",
+    "webcam_2025-09-18_09-00-12",
+
+]
+
 # Rangos HSV para detección de verde (equilibrio entre selectivo y sensible)
 H_MIN_GREEN = 32            # Tono mínimo para verde (ligeramente menos restrictivo)
 H_MAX_GREEN = 88            # Tono máximo para verde (ligeramente menos restrictivo)
@@ -139,21 +152,21 @@ def apply_advanced_preprocessing(bgr: np.ndarray) -> Tuple[np.ndarray, np.ndarra
 def define_plant_roi_arriba(bgr: np.ndarray) -> Tuple[np.ndarray, Tuple[int, int, int, int, int, int, int, int, int, int]]:
     """
     Define dos ROIs circulares para plantas en vista superior:
-    - ROI superior para la primera maceta (más abajo y a la derecha)
-    - ROI inferior para la segunda maceta (más arriba y a la derecha)
+    - ROI superior para la primera maceta 
+    - ROI inferior para la segunda maceta 
     """
     h, w = bgr.shape[:2]
     
-    # Parámetros para dos ROIs circulares separados - AMBOS REDUCIDOS LIGERAMENTE
-    # ROI superior (primera maceta) - más abajo y ligeramente más pequeño
-    center_x1 = int(w * 0.59)  # 59% del ancho (mantener posición horizontal)
-    center_y1 = int(h * 0.22)  # 22% desde arriba (mantener posición vertical)
-    radius1 = int(min(w, h) * 0.17)  # 17% del lado menor (REDUCIDO de 20% a 17%)
     
-    # ROI inferior (segunda maceta) - ligeramente más pequeño
-    center_x2 = int(w * 0.59)  # 59% del ancho (mantener posición horizontal)
-    center_y2 = int(h * 0.45)  # 45% desde arriba (mantener posición vertical)
-    radius2 = int(min(w, h) * 0.16)  # 16% del lado menor (REDUCIDO de 18% a 16%)
+    # ROI superior (primera maceta) 
+    center_x1 = int(w * 0.59)  # 59% del ancho 
+    center_y1 = int(h * 0.22)  # 22% desde arriba 
+    radius1 = int(min(w, h) * 0.17)  # 17% del lado menor 
+    
+    # ROI inferior (segunda maceta) 
+    center_x2 = int(w * 0.59)  # 59% del ancho 
+    center_y2 = int(h * 0.45)  # 45% desde arriba 
+    radius2 = int(min(w, h) * 0.16)  # 16% del lado menor 
     
     # Asegurar que los radios sean válidos usando valores escalares
     max_radius1 = min(center_x1, center_y1, w - center_x1, h - center_y1)
@@ -299,13 +312,7 @@ def enhanced_green_segmentation(bgr: np.ndarray, roi_mask: np.ndarray,
         stem = os.path.splitext(os.path.basename(image_path))[0]
         print(f"     Procesando imagen: {stem}")
         
-        # Identificar las dos imágenes específicas que necesitan umbral más bajo
-        problematic_images = [
-            "webcam_2025-09-15_13-00-06",
-            "webcam_2025-09-15_16-00-18",
-        ]
-        
-        if stem in problematic_images:
+        if stem in PROBLEMATIC_IMAGES:
             # Para las dos imágenes específicas: umbral ExG muy bajo
             exg_thresh = max(3, int(float(np.percentile(exg, 80.0))))
             print(f"     ✓ Imagen problemática detectada - usando ExG percentil 80.0")
@@ -331,7 +338,7 @@ def enhanced_green_segmentation(bgr: np.ndarray, roi_mask: np.ndarray,
         mask_roi = cv2.bitwise_and(mask_combined, roi_mask)
         
         # 4. POSTPROCESAMIENTO MORFOLÓGICO ADAPTATIVO
-        if stem in problematic_images:
+        if stem in PROBLEMATIC_IMAGES:
             # Para imágenes problemáticas: SIN morfología (preservar todo)
             mask_clean = mask_roi.copy()  # Sin ninguna operación morfológica
             print(f"     ✓ SIN morfología para imagen problemática - preservando todos los píxeles")
@@ -343,11 +350,10 @@ def enhanced_green_segmentation(bgr: np.ndarray, roi_mask: np.ndarray,
             mask_clean = cv2.dilate(mask_clean, kernel, iterations=1)
         
         # 5. FILTRADO POR TAMAÑO ADAPTATIVO
-        if stem in problematic_images:
-            # Para imágenes problemáticas: área mínima muy pequeña (50 px)
-            min_area_problematic = 50
-            mask_filtered = clean_components_by_size(mask_clean, min_area_problematic)
-            print(f"     ✓ Área mínima reducida para imagen problemática: {min_area_problematic} px")
+        if stem in PROBLEMATIC_IMAGES:
+         
+            mask_filtered = clean_components_by_size(mask_clean, 65)
+            print(f"     ✓ Área mínima reducida para imagen problemática: 65 px")
         else:
             # Para imágenes normales: filtrado por tamaño estándar
             mask_filtered = clean_components_by_size(mask_clean, MIN_LEAF_AREA)
@@ -408,11 +414,11 @@ def calculate_improved_precision_f1(contour: np.ndarray,
     hull = cv2.convexHull(contour)
     hull_area = cv2.contourArea(hull)
     
-    # Solidez (ya tienes esta)
+    # Solidez 
     solidity = solidity_opencv
     
     # 2. MÉTRICAS DE CALIDAD DE CONTORNO
-    # Compacidad (perímetro²/área) - menor es mejor para formas circulares
+    # Compacidad (perímetro²/área) 
     if area_plantcv > 0:
         compactness = (perimeter_opencv ** 2) / area_plantcv
         # Normalizar compacidad (0-1, donde 1 es perfectamente circular)
@@ -427,11 +433,11 @@ def calculate_improved_precision_f1(contour: np.ndarray,
     aspect_score = max(0, 1 - abs(aspect_ratio - 1) * 0.3)
     
     # 4. MÉTRICAS DE TAMAÑO NORMALIZADAS
-    # Área normalizada (asumiendo área máxima esperada de 8000 px para plantas)
+    # Área normalizada 
     area_score = min(1.0, area_plantcv / 8000.0)
     
     # 5. MÉTRICAS DE CONSISTENCIA
-    # Densidad (área vs perímetro) - plantas compactas tienen mayor densidad
+    # Densidad (área vs perímetro) 
     if perimeter_opencv > 0:
         density = area_plantcv / perimeter_opencv
         # Normalizar densidad (valores típicos: 5-30)
@@ -485,7 +491,7 @@ def calculate_improved_precision_f1(contour: np.ndarray,
     }
 
 def separate_vertically(mask: np.ndarray) -> List[np.ndarray]:
-    """Separa plantas dividiendo verticalmente en múltiples partes."""
+    """Separa plantas dividiendo verticalmente en 2 partes."""
     try:
         # Encontrar contorno
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -495,46 +501,20 @@ def separate_vertically(mask: np.ndarray) -> List[np.ndarray]:
         contour = contours[0]
         x, y, w, h = cv2.boundingRect(contour)
         
-        # Dividir en 3 partes verticales para mayor precisión
-        part1_x = x + w // 3
-        part2_x = x + 2 * w // 3
-        
-        # Crear máscaras para cada parte
-        mask_part1 = mask.copy()
-        mask_part2 = mask.copy()
-        mask_part3 = mask.copy()
-        
-        mask_part1[:, part1_x:] = 0
-        mask_part2[:, :part1_x] = 0
-        mask_part2[:, part2_x:] = 0
-        mask_part3[:, :part2_x] = 0
+        # Dividir en 2 partes verticales
+        center_x = x + w // 2
+        mask_left = mask.copy()
+        mask_right = mask.copy()
+        mask_left[:, center_x:] = 0
+        mask_right[:, :center_x] = 0
         
         separated_masks = []
+        if np.count_nonzero(mask_left) > 50:
+            separated_masks.append(mask_left)
+        if np.count_nonzero(mask_right) > 50:
+            separated_masks.append(mask_right)
         
-        # Verificar que cada parte tenga suficiente área
-        for i, part_mask in enumerate([mask_part1, mask_part2, mask_part3]):
-            area = np.count_nonzero(part_mask)
-            if area > 50:  # Área mínima
-                separated_masks.append(part_mask)
-        
-        # Si tenemos al menos 2 partes válidas, usarlas
-        if len(separated_masks) >= 2:
-            return separated_masks
-        else:
-            # Si no, usar división simple en 2 partes
-            center_x = x + w // 2
-            mask_left = mask.copy()
-            mask_right = mask.copy()
-            mask_left[:, center_x:] = 0
-            mask_right[:, :center_x] = 0
-            
-            separated_masks = []
-            if np.count_nonzero(mask_left) > 50:
-                separated_masks.append(mask_left)
-            if np.count_nonzero(mask_right) > 50:
-                separated_masks.append(mask_right)
-            
-            return separated_masks if len(separated_masks) > 1 else [mask]
+        return separated_masks if len(separated_masks) > 1 else [mask]
         
     except Exception as e:
         print(f"     Error en separación vertical: {e}")
@@ -544,8 +524,8 @@ def separate_close_plants(mask: np.ndarray, min_area: int = 50, is_problematic: 
     """
     Separa plantas que están muy cerca usando técnicas avanzadas:
     - Análisis de forma y elongación
-    - Separación morfológica con watershed
     - División por centroides
+    - División vertical simple
     - Criterios más estrictos para imágenes problemáticas
     """
     try:
@@ -611,22 +591,16 @@ def separate_close_plants(mask: np.ndarray, min_area: int = 50, is_problematic: 
             if should_separate:
                 print(f"     Detectando plantas cercanas - {reason}, área: {area:.0f}")
                 
-                # Intentar separar usando watershed
-                separated = separate_with_watershed(plant_mask)
+                # Intentar separar usando división por centroides
+                separated = separate_by_centroids(plant_mask)
                 if len(separated) > 1:
                     separated_masks.extend(separated)
-                    print(f"     Separación exitosa: {len(separated)} plantas")
+                    print(f"     Separación por centroides: {len(separated)} plantas")
                 else:
-                    # Si watershed falla, usar división por centroides
-                    separated = separate_by_centroids(plant_mask)
-                    if len(separated) > 1:
-                        separated_masks.extend(separated)
-                        print(f"     Separación por centroides: {len(separated)} plantas")
-                    else:
-                        # Si todo falla, usar división vertical simple
-                        separated = separate_vertically(plant_mask)
-                        separated_masks.extend(separated)
-                        print(f"     Separación vertical: {len(separated)} plantas")
+                    # Si falla, usar división vertical simple
+                    separated = separate_vertically(plant_mask)
+                    separated_masks.extend(separated)
+                    print(f"     Separación vertical: {len(separated)} plantas")
             else:
                 # Planta individual, no necesita separación
                 separated_masks.append(plant_mask)
@@ -637,66 +611,6 @@ def separate_close_plants(mask: np.ndarray, min_area: int = 50, is_problematic: 
         print(f"     Error en separación de plantas: {e}")
         return [mask]
 
-def separate_with_watershed(mask: np.ndarray) -> List[np.ndarray]:
-    """Separa plantas usando watershed transform mejorado."""
-    try:
-        # Encontrar contornos
-        contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-        if len(contours) != 1:
-            return [mask]
-        
-        # Obtener el contorno
-        contour = contours[0]
-        x, y, w, h = cv2.boundingRect(contour)
-        
-        # Calcular centroide
-        M = cv2.moments(contour)
-        if M["m00"] == 0:
-            return [mask]
-        
-        cx = int(M["m10"] / M["m00"])
-        cy = int(M["m01"] / M["m00"])
-        
-        # Crear marcadores más separados para mejor separación
-        # Usar 1/3 y 2/3 del ancho en lugar de 1/4 y 3/4
-        left_marker = (x + w//3, cy)
-        right_marker = (x + 2*w//3, cy)
-        
-        # Verificar que los marcadores estén dentro de la máscara
-        if (left_marker[0] < 0 or left_marker[0] >= mask.shape[1] or 
-            left_marker[1] < 0 or left_marker[1] >= mask.shape[0] or
-            right_marker[0] < 0 or right_marker[0] >= mask.shape[1] or 
-            right_marker[1] < 0 or right_marker[1] >= mask.shape[0]):
-            return [mask]
-        
-        # Crear imagen de marcadores
-        markers = np.zeros_like(mask, dtype=np.int32)
-        markers[left_marker[1], left_marker[0]] = 1
-        markers[right_marker[1], right_marker[0]] = 2
-        
-        # Crear imagen de distancia para watershed
-        dist_transform = cv2.distanceTransform(mask, cv2.DIST_L2, 5)
-        
-        # Aplicar watershed
-        markers = cv2.watershed(cv2.cvtColor(mask, cv2.COLOR_GRAY2BGR), markers)
-        
-        # Separar las regiones
-        separated_masks = []
-        for label in [1, 2]:
-            region_mask = (markers == label).astype(np.uint8) * 255
-            area = np.count_nonzero(region_mask)
-            if area > 100:  # Área mínima más estricta
-                separated_masks.append(region_mask)
-        
-        # Si no se separó correctamente, intentar división vertical simple
-        if len(separated_masks) <= 1:
-            return separate_vertically(mask)
-        
-        return separated_masks
-        
-    except Exception as e:
-        print(f"     Error en watershed: {e}")
-        return [mask]
 
 def separate_by_centroids(mask: np.ndarray) -> List[np.ndarray]:
     """Separa plantas dividiendo por centroides."""
@@ -733,12 +647,8 @@ def separate_by_centroids(mask: np.ndarray) -> List[np.ndarray]:
         return [mask]
 
 def calculate_individual_plants_by_roi(mask_leaves: np.ndarray, roi_coords: Tuple, image_path: str = None) -> List[Dict[str, Any]]:
-    """
-    Calcula métricas morfológicas para plantas individuales dentro de cada ROI:
-    - ROI 1: Detecta 1 planta individual
-    - ROI 2: Detecta 2 plantas individuales
-    - Cada planta se detecta por separado sin combinar píxeles
-    """
+   
+
     metrics_list = []
     
     # Extraer coordenadas de los dos ROIs circulares
@@ -752,13 +662,7 @@ def calculate_individual_plants_by_roi(mask_leaves: np.ndarray, roi_coords: Tupl
     
     # Identificar si es una imagen problemática
     stem = os.path.splitext(os.path.basename(image_path))[0] if image_path else ""
-    problematic_images = [
-        "webcam_2025-09-15_13-00-06",
-        "webcam_2025-09-15_16-00-18",
-        "webcam_2025-09-14_13-00-02",
-        "webcam_2025-09-17_09-00-05",  # Nueva imagen problemática
-    ]
-    is_problematic = stem in problematic_images
+    is_problematic = stem in PROBLEMATIC_IMAGES
     
     # Procesar cada ROI para detectar plantas individuales
     for roi_idx, (center_x, center_y, radius) in enumerate([(center_x1, center_y1, radius1), 
@@ -777,6 +681,9 @@ def calculate_individual_plants_by_roi(mask_leaves: np.ndarray, roi_coords: Tupl
         if total_pixels < min_area_threshold:  # Si no hay suficientes píxeles, saltar este ROI
             continue
         
+        if is_problematic:
+            print(f"     ROI {roi_idx}: Usando área mínima reducida: {min_area_threshold} px (imagen problemática)")
+        
         # Encontrar contornos de plantas individuales dentro del ROI
         contours, _ = cv2.findContours(plant_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
         
@@ -784,11 +691,6 @@ def calculate_individual_plants_by_roi(mask_leaves: np.ndarray, roi_coords: Tupl
             continue
         
         # Filtrar contornos por área mínima y ordenar por tamaño
-        # Usar área mínima reducida para imágenes problemáticas
-        min_area_threshold = 150 if is_problematic else MIN_LEAF_AREA
-        if is_problematic:
-            print(f"     ROI {roi_idx}: Usando área mínima reducida: {min_area_threshold} px (imagen problemática)")
-        
         valid_contours = []
         for contour in contours:
             area = cv2.contourArea(contour)
@@ -803,11 +705,7 @@ def calculate_individual_plants_by_roi(mask_leaves: np.ndarray, roi_coords: Tupl
             # Verificar si hay un contorno muy grande que podría ser dos plantas
             largest_contour, largest_area = valid_contours[0] if valid_contours else (None, 0)
             
-            # Criterios para detectar plantas cercanas:
-            # 1. Hay solo un contorno grande, O
-            # 2. El contorno más grande es mucho mayor que los otros, O  
-            # 3. El contorno más grande tiene aspect ratio alto (muy ancho)
-            # 4. Para imágenes problemáticas: criterios más estrictos
+            
             should_separate = False
             
             if len(valid_contours) == 1:
@@ -859,10 +757,10 @@ def calculate_individual_plants_by_roi(mask_leaves: np.ndarray, roi_coords: Tupl
         
         # Determinar cuántas plantas detectar según el ROI
         if roi_idx == 1:
-            # ROI 1: Detectar solo 1 planta (la más grande)
+            # ROI 1: Detectar solo 1 planta 
             plants_to_detect = 1
         else:
-            # ROI 2: Detectar hasta 2 plantas (las más grandes)
+            # ROI 2: Detectar hasta 2 plantas 
             plants_to_detect = min(2, len(valid_contours))
         
         # Procesar las plantas detectadas
@@ -878,27 +776,26 @@ def calculate_individual_plants_by_roi(mask_leaves: np.ndarray, roi_coords: Tupl
             hull_area = cv2.contourArea(hull)
             solidity_opencv = area / (hull_area + 1e-6) if hull_area > 0 else 0
             
-            # Usar PlantCV para conteo de píxeles
+            # Usar PlantCV disponible (estructura original), sin NumPy para el conteo
             if PLANT_CV_AVAILABLE:
                 try:
                     # Crear máscara para esta planta específica
                     plant_mask_single = np.zeros_like(mask_leaves)
                     cv2.fillPoly(plant_mask_single, [contour], 255)
                     
-                    # Contar píxeles con PlantCV
-                    pixel_count = np.count_nonzero(plant_mask_single)
+                    
+                    pixel_count = int(cv2.countNonZero(plant_mask_single))
                     area_plantcv = float(pixel_count)
                     
                 except Exception as e:
                     print(f"     Error en PlantCV para ROI {roi_idx}, planta {plant_idx + 1}: {e}")
-                    # Fallback a OpenCV
+                    # Fallback a OpenCV (área por contorno)
                     area_plantcv = float(area)
             else:
-                # Si PlantCV no está disponible, usar área de OpenCV
+                # Si PlantCV no está disponible, usar área de OpenCV del contorno
                 area_plantcv = float(area)
             
-            # *** MEJORA: CÁLCULO AVANZADO DE PRECISIÓN Y F1 SCORE ***
-            # Usar la nueva función que mantiene la segmentación original
+        
             improved_metrics = calculate_improved_precision_f1(
                 contour=contour,
                 area_plantcv=area_plantcv,
@@ -906,13 +803,13 @@ def calculate_individual_plants_by_roi(mask_leaves: np.ndarray, roi_coords: Tupl
                 solidity_opencv=solidity_opencv
             )
             
-            # Usar métricas mejoradas
+            
             precision = improved_metrics['precision']
             f1_score = improved_metrics['f1_score']
             recall = improved_metrics['recall']
             
             
-            # Crear ID secuencial para cada planta (1, 2, 3, etc.)
+            
             plant_id = global_plant_counter
             global_plant_counter += 1
             
@@ -1137,7 +1034,7 @@ def main_arriba():
     print(f"   - S mínima: {S_MIN_GREEN}")
     print(f"   - V mínima: {V_MIN_GREEN}")
     print(f"   - ExG percentil: 96.5 (80.0 para 3 imágenes específicas)")
-    print(f"   - Estrategia adaptativa: Sin morfología + área mínima 50px para imágenes problemáticas")
+    print(f"   - Estrategia adaptativa: Sin morfología + área mínima 65px para imágenes problemáticas")
     print(f"   - Resto de imágenes: Mantienen parámetros normales sin ruido")
     print("=" * 60)
     print(" DOS ROIs CIRCULARES OPTIMIZADOS: Maceta 1 (22% alto, 59% ancho, radio 17%) y Maceta 2 (45% alto, 59% ancho, radio 16%)")

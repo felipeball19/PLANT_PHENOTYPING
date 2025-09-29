@@ -3293,7 +3293,12 @@ with gr.Blocks(title="🌱 Análisis de Fenotipado Vegetal — PlantCV", theme=g
 
     with gr.Row():
         btn_refresh = gr.Button("🔄 Actualizar opciones", variant="primary", size="lg")
+        btn_report = gr.Button("📄 Reporte", variant="primary", size="lg")
         info_display = gr.Markdown("ℹ️ Los dropdowns ya tienen opciones disponibles. Haz clic en ellos para ver las opciones.")
+
+    # Contenedor para mostrar el reporte del notebook
+    with gr.Row():
+        report_html = gr.HTML()
 
     with gr.Tabs():
         # Tab única: Análisis Temporal
@@ -3879,6 +3884,76 @@ with gr.Blocks(title="🌱 Análisis de Fenotipado Vegetal — PlantCV", theme=g
     
     btn_time_plot.click(fn=plot_timeseries, inputs=[dd_csv_time, dd_x_time, dd_y_time, dd_chart_type, dd_aggregation], outputs=[time_plot, time_plot_msg])
     btn_csv_info.click(fn=get_csv_info, inputs=[dd_csv_time], outputs=[csv_info])
+
+    # Botón Reporte: renderizar y mostrar REPORTE_PROPIO.ipynb
+    def render_report_notebook():
+        try:
+            import os
+            import sys
+            def ensure_packages(packages):
+                try:
+                    import importlib
+                    missing = []
+                    for pkg in packages:
+                        try:
+                            importlib.import_module(pkg)
+                        except Exception:
+                            missing.append(pkg)
+                    if missing:
+                        import subprocess
+                        cmd = [sys.executable, "-m", "pip", "install"] + missing
+                        result = subprocess.run(cmd, capture_output=True, text=True, timeout=300)
+                        if result.returncode != 0:
+                            return False, result.stderr
+                    return True, None
+                except Exception as inst_err:
+                    return False, str(inst_err)
+
+            ok, err = ensure_packages(["nbformat", "nbconvert"])
+            if not ok:
+                return (
+                    "<div style='padding:10px;border:1px solid #ccc;background:#fff3cd;'>"
+                    "❌ No se pudieron instalar las dependencias requeridas (nbformat/nbconvert).<br>"
+                    "💡 Instala manualmente: <code>pip install nbconvert nbformat</code><br>"
+                    f"Detalle: {err}</div>"
+                )
+
+            import nbformat
+            from nbconvert import HTMLExporter
+            from traitlets.config import Config
+
+            notebook_path = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "REPORTE_PROPIO.ipynb"))
+            if not os.path.exists(notebook_path):
+                return (
+                    "<div style='padding:10px;border:1px solid #ccc;background:#f8d7da;'>"
+                    f"❌ No se encontró el notebook en: {notebook_path}</div>"
+                )
+
+            with open(notebook_path, "r", encoding="utf-8") as f:
+                nb = nbformat.read(f, as_version=4)
+
+            cfg = Config()
+            # Ocultar celdas de código y sus prompts; mantener outputs y markdowns
+            cfg.HTMLExporter.exclude_input = True
+            cfg.HTMLExporter.exclude_input_prompt = True
+            cfg.HTMLExporter.exclude_output_prompt = True
+            exporter = HTMLExporter(config=cfg)
+            exporter.template_name = "classic"
+            (body, resources) = exporter.from_notebook_node(nb)
+
+            html = (
+                "<div style='width:100%;overflow:auto;max-height:800px;border:1px solid #ddd;'>" +
+                body +
+                "</div>"
+            )
+            return html
+        except Exception as e:
+            return (
+                "<div style='padding:10px;border:1px solid #ccc;background:#f8d7da;'>"
+                f"❌ Error renderizando el reporte: {str(e)}</div>"
+            )
+
+    btn_report.click(fn=render_report_notebook, outputs=[report_html])
 
     # Inicializar columnas al cargar la aplicación
     demo.load(fn=initialize_columns, outputs=[dd_x_time, dd_y_time, columns_info])

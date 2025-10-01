@@ -1,11 +1,11 @@
-🌱 Proyecto: Sistema de Fenotipado de Plantas con Hardware Embebido y Visión por Computadora
+ Proyecto: Sistema de Fenotipado de Plantas con Hardware Embebido y Visión por Computadora
 
 Este repositorio contiene el código, datos y resultados asociados al trabajo de grado “Prototipo de sistema para el fenotipado de plantas mediante hardware embebido y visión por computadora”.  
 El sistema permite capturar imágenes y datos ambientales de cultivos de tomate y pimentón utilizando una Raspberry Pi y procesarlos mediante técnicas de visión por computadora (OpenCV, PlantCV y SAM) para extraer métricas fenotípicas como área foliar, perímetro, solidez, altura y NDVI.
 
 
 
-🚀 Funcionalidades principales
+ Funcionalidades principales
 - Adquisición automática de datos:  
   - Imágenes RGB (superior), NIR (NoIR) y laterales.  
   - Lecturas de temperatura, humedad relativa y humedad de suelo.
@@ -21,22 +21,22 @@ El sistema permite capturar imágenes y datos ambientales de cultivos de tomate 
 
 
 
- 📂 Estructura del repositorio
+  Estructura del repositorio
 
 | Carpeta/Archivo | Descripción |
 |-----------------|-------------|
-| `REPORTE_PROPIO.ipynb` | Notebook principal de análisis de datos y generación de resultados. |
-| `REPORTE_PROPIO (3).ipynb` | Versión preliminar / respaldo del reporte principal. |
-| `procesamiento_arriba.py` | Script para procesar imágenes RGB superiores. |
-| `procesamiento_noir.py` | Script para procesar imágenes NIR y calcular NDVI. |
-| `procesamiento_SAM.py` | Script para segmentación asistida con **Segment Anything Model (SAM)**. |
-| `metricas_morfologicas.csv` | Resultados de métricas morfológicas (área, perímetro, solidez). |
-| `metricas_reflectancia.csv` | Datos de reflectancia y NDVI calculados. |
-| `metricas_tallos.csv` | Datos de altura y número de tallos obtenidos de imágenes laterales. |
-| `sensores_ambiente.csv` | Lecturas de temperatura y humedad relativa del aire. |
-| `sensores_humedad.csv` | Lecturas de humedad del suelo durante el experimento. |
-| `prototipo_proyecto.7z` | Archivo comprimido con diseños de PCB, estructura y documentación del prototipo. |
-| `requirements.txt` | Lista de dependencias necesarias para ejecutar los scripts y notebooks. |
+| REPORTE_PROPIO.ipynb | Notebook principal de análisis de datos y generación de resultados. |
+| REPORTE_PROPIO (3).ipynb | Versión preliminar / respaldo del reporte principal. |
+| procesamiento_arriba.py | Script para procesar imágenes RGB superiores. |
+| procesamiento_noir.py | Script para procesar imágenes NIR y calcular NDVI. |
+| procesamiento_SAM.py | Script para segmentación asistida con Segment Anything Model (SAM). |
+| metricas_morfologicas.csv | Resultados de métricas morfológicas (área, perímetro, solidez). |
+| metricas_reflectancia.csv | Datos de reflectancia y NDVI calculados. |
+| metricas_tallos.csv | Datos de altura y número de tallos obtenidos de imágenes laterales. |
+| sensores_ambiente.csv | Lecturas de temperatura y humedad relativa del aire. |
+| sensores_humedad.csv | Lecturas de humedad del suelo durante el experimento. |
+| prototipo_proyecto.7z | Archivo comprimido con diseños de PCB, estructura y documentación del prototipo. |
+| requirements.txt | Lista de dependencias necesarias para ejecutar los scripts y notebooks. |
 
 ---
 
@@ -76,6 +76,6 @@ El sistema permite capturar imágenes y datos ambientales de cultivos de tomate 
 
 
 
- 📊 Datos de ejemplo
+ Datos de ejemplo
 - Los CSV incluidos (metricas_morfologicas.csv, metricas_reflectancia.csv, metricas_tallos.csv) contienen resultados obtenidos durante un mes de monitoreo de cultivos de tomate y pimentón bajo invernadero.
 

@@ -79,3 +79,25 @@ El sistema permite capturar imágenes y datos ambientales de cultivos de tomate 
  Datos de ejemplo
 - Los CSV incluidos (metricas_morfologicas.csv, metricas_reflectancia.csv, metricas_tallos.csv) contienen resultados obtenidos durante un mes de monitoreo de cultivos de tomate y pimentón bajo invernadero.
 
+ Anexos
+
+En esta carpeta se incluyen las tablas y gráficas completas que complementan el trabajo escrito:
+
+-  [Tabla de comparación métricas morfológicas entre el dataset externo y el propio (https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/Comparacion_metricas_dataset_externo_propio.xlsx)
+
+-  [Datos de sensores ambientales](https://github.com/felipeball19/PLANT_PHENOTYPING/tree/main/anexos/sensores_ambiente.csv)
+-  [Datos de sensores de humedad de suelo sensor 1](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/03_promedio_diario_sensor1%20(1).pdf)
+-  [Datos de sensores de humedad de suelo sensor 2](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/04_promedio_diario_sensor2%20(1).pdf)
+-  [Gráfica de evolución de área foliar](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/evolucion%20de%20area%20en%20cm.png)
+-  [Gráfica de evolución de perimetro](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/evolucion%20perimetro%20cm.png)
+-  [Gráfica de evolución de solidez](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/visualizaci%C3%B3n%20solidez.png)
+-  [Gráfica de distribución área,perimetro,solidez](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/distribucion%20area%2Cperimetro%2Csolidez.png)
+-  [visualización de NDVI medio y std](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/distribucion%20ndvi%20medio_std.png)
+-  [Tabla de comparacion metricas entre el dataset externo y propio](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/Comparacion_metricas_dataset_externo_propio.xlsx)
+-  [Gráfica de comparacion de área foliar entre el dataset externo y propio](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/comparacion_area_plantcv%20%20dataset%20externo%20vs%20propio.pdf)
+-  [Gráfica de comparacion de perimetro entre el dataset externo y propio](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/comparacion_perimetro_opencv%20%20dataset%20externo%20vs%20propio.pdf)
+-  [Gráfica de comparacion de área solidez entre el dataset externo y propio](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/comparacion_solidez_opencv%20dataset%20externo%20vs%20propio.pdf)
+-  
+-  [Tabla de interfaz web entrada y salidas](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/tabla_interfaz_web.xlsx)
+
+

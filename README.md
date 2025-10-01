@@ -1,22 +1,22 @@
 🌱 Proyecto: Sistema de Fenotipado de Plantas con Hardware Embebido y Visión por Computadora
 
-Este repositorio contiene el código, datos y resultados asociados al trabajo de grado “Prototipo de sistema para el fenotipado de plantas mediante hardware embebido y visión por computadora”**.  
+Este repositorio contiene el código, datos y resultados asociados al trabajo de grado “Prototipo de sistema para el fenotipado de plantas mediante hardware embebido y visión por computadora”.  
 El sistema permite capturar imágenes y datos ambientales de cultivos de tomate y pimentón utilizando una Raspberry Pi y procesarlos mediante técnicas de visión por computadora (OpenCV, PlantCV y SAM) para extraer métricas fenotípicas como área foliar, perímetro, solidez, altura y NDVI.
 
 
 
 🚀 Funcionalidades principales
-- Adquisición automática de datos:**  
+- Adquisición automática de datos:  
   - Imágenes RGB (superior), NIR (NoIR) y laterales.  
   - Lecturas de temperatura, humedad relativa y humedad de suelo.
-- rocesamiento de imágenes:**  
+- rocesamiento de imágenes:  
   - Preprocesamiento (balance de blancos, CLAHE, filtros bilaterales).  
   - Segmentación híbrida (ExG + HSV + SAM).  
   - Cálculo de métricas morfológicas y NDVI.
-- Interfaz web interactiva (Gradio):**  
+- Interfaz web interactiva (Gradio):  
   - Visualización de métricas temporales (área, altura, NDVI).  
   - Análisis de imágenes individuales y segmentación asistida.  
-- Resultados reproducibles:**  
+- Resultados reproducibles:  
   - Scripts para generar métricas y gráficas de crecimiento.
 
 

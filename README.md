@@ -97,7 +97,6 @@ En esta carpeta se incluyen las tablas y gráficas completas que complementan el
 -  [Gráfica de comparacion de área foliar entre el dataset externo y propio](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/comparacion_area_plantcv%20%20dataset%20externo%20vs%20propio.pdf)
 -  [Gráfica de comparacion de perimetro entre el dataset externo y propio](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/comparacion_perimetro_opencv%20%20dataset%20externo%20vs%20propio.pdf)
 -  [Gráfica de comparacion de área solidez entre el dataset externo y propio](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/comparacion_solidez_opencv%20dataset%20externo%20vs%20propio.pdf)
--  
 -  [Tabla de interfaz web entrada y salidas](https://github.com/felipeball19/PLANT_PHENOTYPING/blob/main/Anexos/tabla_interfaz_web.xlsx)
 
 

@@ -3,7 +3,7 @@
 Este repositorio contiene el código, datos y resultados asociados al trabajo de grado “Prototipo de sistema para el fenotipado de plantas mediante hardware embebido y visión por computadora”.  
 El sistema permite capturar imágenes y datos ambientales de cultivos de tomate y pimentón utilizando una Raspberry Pi y procesarlos mediante técnicas de visión por computadora (OpenCV, PlantCV y SAM) para extraer métricas fenotípicas como área foliar, perímetro, solidez, altura y NDVI.
 
-
+link del repositorio : https://github.com/felipeball19/PLANT_PHENOTYPING.git
 
  Funcionalidades principales
 - Adquisición automática de datos:  
